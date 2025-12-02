@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2023-2024 The Konstraints Authors
+ * Copyright 2023-2025 The Konstraints Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,22 +25,22 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
 
 plugins {
-    `kotlin-dsl`
-    `java-library`
-    `maven-publish`
-    signing
+  `kotlin-dsl`
+  `java-library`
+  `maven-publish`
+  signing
 
-    alias(libs.plugins.detekt)
-    alias(libs.plugins.download)
-    alias(libs.plugins.gitVersioning)
-    alias(libs.plugins.kotlin.dokka)
-    alias(libs.plugins.kotlin.jvm)
-    alias(libs.plugins.kotlin.kover)
-    alias(libs.plugins.nexus.publish)
-    alias(libs.plugins.node)
-    alias(libs.plugins.spotless)
-    alias(libs.plugins.taskTree)
-    alias(libs.plugins.versions)
+  alias(libs.plugins.detekt)
+  alias(libs.plugins.download)
+  alias(libs.plugins.gitVersioning)
+  alias(libs.plugins.kotlin.dokka)
+  alias(libs.plugins.kotlin.jvm)
+  alias(libs.plugins.kotlin.kover)
+  alias(libs.plugins.nexus.publish)
+  alias(libs.plugins.node)
+  alias(libs.plugins.spotless)
+  alias(libs.plugins.taskTree)
+  alias(libs.plugins.versions)
 }
 
 group = "tools.aqua"
@@ -48,115 +48,117 @@ group = "tools.aqua"
 version = "0.0.0-SNAPSHOT"
 
 gitVersioning.apply {
-    describeTagFirstParent = false
-    refs {
-        considerTagsOnBranches = true
-        tag("(?<version>.*)") {
-            // on a tag: use the tag name as is
-            version = "\${ref.version}"
-        }
-        branch("main") {
-            // on the main branch: use <last.tag.version>-<distance>-<commit>-SNAPSHOT
-            version = "\${describe.tag.version}-\${describe.distance}-\${commit.short}-SNAPSHOT"
-        }
-        branch(".+") {
-            // on other branches: use <last.tag.version>-<branch.name>-<distance>-<commit>-SNAPSHOT
-            version =
-                "\${describe.tag.version}-\${ref.slug}-\${describe.distance}-\${commit.short}-SNAPSHOT"
-        }
+  describeTagFirstParent = false
+  refs {
+    considerTagsOnBranches = true
+    tag("(?<version>.*)") {
+      // on a tag: use the tag name as is
+      version = "\${ref.version}"
     }
+    branch("main") {
+      // on the main branch: use <last.tag.version>-<distance>-<commit>-SNAPSHOT
+      version = "\${describe.tag.version}-\${describe.distance}-\${commit.short}-SNAPSHOT"
+    }
+    branch(".+") {
+      // on other branches: use <last.tag.version>-<branch.name>-<distance>-<commit>-SNAPSHOT
+      version =
+          "\${describe.tag.version}-\${ref.slug}-\${describe.distance}-\${commit.short}-SNAPSHOT"
+    }
+  }
 
-    // optional fallback configuration in case of no matching ref configuration
-    rev {
-        // in case of missing git data: use 0.0.0-unknown-0-<commit>-SNAPSHOT
-        version = "0.0.0-unknown-0-\${commit.short}-SNAPSHOT"
-    }
+  // optional fallback configuration in case of no matching ref configuration
+  rev {
+    // in case of missing git data: use 0.0.0-unknown-0-<commit>-SNAPSHOT
+    version = "0.0.0-unknown-0-\${commit.short}-SNAPSHOT"
+  }
 }
 
 repositories { mavenCentral() }
 
 dependencies {
-    testImplementation(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter)
+  testImplementation(platform(libs.junit.bom))
+  testImplementation(libs.junit.jupiter)
+    testRuntimeOnly(libs.junit.launcher)
 }
 
 node {
-    download = true
-    workDir = layout.buildDirectory.dir("nodejs")
+  download = true
+  workDir = layout.buildDirectory.dir("nodejs")
 }
 
 fun isNonStable(version: String): Boolean {
-    val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.uppercase().contains(it) }
-    val regex = "^[0-9,.v-]+(-r)?$".toRegex()
-    val isStable = stableKeyword || regex.matches(version)
-    return isStable.not()
+  val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.uppercase().contains(it) }
+  val regex = "^[0-9,.v-]+(-r)?$".toRegex()
+  val isStable = stableKeyword || regex.matches(version)
+  return isStable.not()
 }
 
 tasks.withType<DependencyUpdatesTask> {
-    gradleReleaseChannel = "current"
-    rejectVersionIf { isNonStable(candidate.version) && !isNonStable(currentVersion) }
+  gradleReleaseChannel = "current"
+  rejectVersionIf { isNonStable(candidate.version) && !isNonStable(currentVersion) }
 }
 
 spotless {
-    kotlin {
-        licenseHeaderFile(project.file("config/license/Apache-2.0-cstyle")).updateYearWithLatest(true)
-        ktfmt()
-    }
-    kotlinGradle {
-        licenseHeaderFile(project.file("config/license/Apache-2.0-cstyle"), "(plugins|import )")
-            .updateYearWithLatest(true)
-        ktfmt()
-    }
-    format("contribPython") {
-        target("contrib/*.py")
-        licenseHeaderFile(project.file("config/license/Apache-2.0-hashmark"), "import")
-            .skipLinesMatching("#!")
-            .updateYearWithLatest(true)
-    }
-    format("contribShell") {
-        target("contrib/*.sh")
-        licenseHeaderFile(project.file("config/license/Apache-2.0-hashmark"), "set")
-            .skipLinesMatching("#!")
-            .updateYearWithLatest(true)
-    }
-    format("contribSingularity") {
-        target("contrib/*.def")
-        licenseHeaderFile(project.file("config/license/Apache-2.0-hashmark"), "Bootstrap:")
-            .updateYearWithLatest(true)
-    }
-    format("markdown") {
-        target(".github/**/*.md", "*.md")
-        licenseHeaderFile(project.file("config/license/CC-BY-4.0-xmlstyle"), "#+")
-            .updateYearWithLatest(true)
-        prettier()
-            .npmInstallCache()
-            .nodeExecutable(computeNodeExec(node, computeNodeDir(node)).get())
-            .config(mapOf("parser" to "markdown", "printWidth" to 100, "proseWrap" to "always"))
-    }
-    yaml {
-        target("config/**/*.yml", ".github/**/*.yml", "CITATION.cff")
-        licenseHeaderFile(project.file("config/license/Apache-2.0-hashmark"), "[A-Za-z-]+:")
-            .updateYearWithLatest(true)
-        prettier()
-            .npmInstallCache()
-            .nodeExecutable(computeNodeExec(node, computeNodeDir(node)).get())
-            .config(mapOf("parser" to "yaml", "printWidth" to 100))
-    }
-    format("toml") {
-        target("gradle/libs.versions.toml")
-        licenseHeaderFile(project.file("config/license/Apache-2.0-hashmark"), """\[[A-Za-z-]+]""")
-            .updateYearWithLatest(true)
-        prettier(mapOf("prettier-plugin-toml" to libs.versions.prettier.toml.get()))
-            .npmInstallCache()
-            .nodeExecutable(computeNodeExec(node, computeNodeDir(node)).get())
-            .config(
-                mapOf(
-                    "plugins" to listOf("prettier-plugin-toml"),
-                    "parser" to "toml",
-                    "alignComments" to false,
-                    "printWidth" to 100,
-                ))
-    }
+  kotlin {
+    licenseHeaderFile(project.file("config/license/Apache-2.0-cstyle")).updateYearWithLatest(true)
+    ktfmt()
+  }
+  kotlinGradle {
+    licenseHeaderFile(project.file("config/license/Apache-2.0-cstyle"), "(plugins|import )")
+        .updateYearWithLatest(true)
+    ktfmt()
+  }
+  format("contribPython") {
+    target("contrib/*.py")
+    licenseHeaderFile(project.file("config/license/Apache-2.0-hashmark"), "import")
+        .skipLinesMatching("#!")
+        .updateYearWithLatest(true)
+  }
+  format("contribShell") {
+    target("contrib/*.sh")
+    licenseHeaderFile(project.file("config/license/Apache-2.0-hashmark"), "set")
+        .skipLinesMatching("#!")
+        .updateYearWithLatest(true)
+  }
+  format("contribSingularity") {
+    target("contrib/*.def")
+    licenseHeaderFile(project.file("config/license/Apache-2.0-hashmark"), "Bootstrap:")
+        .updateYearWithLatest(true)
+  }
+  format("markdown") {
+    target(".github/**/*.md", "*.md")
+    licenseHeaderFile(project.file("config/license/CC-BY-4.0-xmlstyle"), "#+")
+        .updateYearWithLatest(true)
+    prettier()
+        .npmInstallCache()
+        .nodeExecutable(computeNodeExec(node, computeNodeDir(node)).get())
+        .config(mapOf("parser" to "markdown", "printWidth" to 100, "proseWrap" to "always"))
+  }
+  yaml {
+    target("config/**/*.yml", ".github/**/*.yml", "CITATION.cff")
+    licenseHeaderFile(project.file("config/license/Apache-2.0-hashmark"), "[A-Za-z-]+:")
+        .updateYearWithLatest(true)
+    prettier()
+        .npmInstallCache()
+        .nodeExecutable(computeNodeExec(node, computeNodeDir(node)).get())
+        .config(mapOf("parser" to "yaml", "printWidth" to 100))
+  }
+  format("toml") {
+    target("gradle/libs.versions.toml")
+    licenseHeaderFile(project.file("config/license/Apache-2.0-hashmark"), """\[[A-Za-z-]+]""")
+        .updateYearWithLatest(true)
+    prettier(mapOf("prettier-plugin-toml" to libs.versions.prettier.toml.get()))
+        .npmInstallCache()
+        .nodeExecutable(computeNodeExec(node, computeNodeDir(node)).get())
+        .config(
+            mapOf(
+                "plugins" to listOf("prettier-plugin-toml"),
+                "parser" to "toml",
+                "alignComments" to false,
+                "printWidth" to 100,
+            )
+        )
+  }
 }
 
 tasks.named("spotlessMarkdown") { dependsOn(tasks.npmSetup) }
@@ -168,35 +170,35 @@ tasks.named("spotlessYaml") { dependsOn(tasks.npmSetup) }
 detekt { ignoreFailures = true }
 
 val kdocJar: TaskProvider<Jar> by
-tasks.registering(Jar::class) {
-    group = DOCUMENTATION_GROUP
-    archiveClassifier = "kdoc"
-    from(tasks.dokkaHtml.flatMap { it.outputDirectory })
-}
+    tasks.registering(Jar::class) {
+      group = DOCUMENTATION_GROUP
+      archiveClassifier = "kdoc"
+      from(tasks.dokkaHtml.flatMap { it.outputDirectory })
+    }
 
 val kdoc: Configuration by
-configurations.creating {
-    isCanBeConsumed = true
-    isCanBeResolved = false
-}
+    configurations.creating {
+      isCanBeConsumed = true
+      isCanBeResolved = false
+    }
 
 artifacts { add(kdoc.name, kdocJar) }
 
 val javadocJar: TaskProvider<Jar> by
-tasks.registering(Jar::class) {
-    group = DOCUMENTATION_GROUP
-    archiveClassifier = "javadoc"
-    from(tasks.dokkaJavadoc.flatMap { it.outputDirectory })
-}
+    tasks.registering(Jar::class) {
+      group = DOCUMENTATION_GROUP
+      archiveClassifier = "javadoc"
+      from(tasks.dokkaJavadoc.flatMap { it.outputDirectory })
+    }
 
 java {
-    withJavadocJar()
-    withSourcesJar()
+  withJavadocJar()
+  withSourcesJar()
 }
 
 kotlin { jvmToolchain(libs.versions.java.jdk.get().toInt()) }
 
 tasks.test {
-    useJUnitPlatform()
-    testLogging { events(FAILED, SKIPPED, PASSED) }
+  useJUnitPlatform()
+  testLogging { events(FAILED, SKIPPED, PASSED) }
 }

@@ -53,8 +53,12 @@ data class Complex(val re: Double, val im: Double) {
   operator fun div(other: Complex): Complex = this * other.inverse()
 }
 
-val Double.re: Complex
-  get() = Complex(this, 0.0)
+val Number.re: Complex
+  get() = Complex(this.toDouble(), 0.0)
 
-val Double.i: Complex
-  get() = Complex(0.0, this)
+val Number.i: Complex
+  get() = Complex(0.0, this.toDouble())
+
+infix operator fun Number.plus(other: Complex): Complex = Complex(this.toDouble(), 0.0) + other
+
+infix operator fun Complex.plus(other: Number): Complex = this + Complex(other.toDouble(), 0.0)

@@ -36,3 +36,4 @@ versions = { id = "com.github.ben-manes.versions", version = "0.51.0" }
 junit-bom = { group = "org.junit", name = "junit-bom", version = "5.13.4" }
 junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter" } # version from BOM
 junit-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" } # version from BOM
+konstraints = { group = "tools.aqua", name = "konstraints-all", version = "0.3-34-datatypes-support-39-943611e-SNAPSHOT" }

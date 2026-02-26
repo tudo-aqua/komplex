@@ -19,6 +19,8 @@
 package tools.aqua.komplex
 
 import kotlin.math.sqrt
+import tools.aqua.konstraints.smt.Expression
+import tools.aqua.konstraints.smt.RealLiteral
 
 data class Complex(val re: Double, val im: Double) {
   /** Addition: (a + bi) + (c + di) = (a+c) + (b+d)i */
@@ -62,3 +64,6 @@ val Number.i: Complex
 infix operator fun Number.plus(other: Complex): Complex = Complex(this.toDouble(), 0.0) + other
 
 infix operator fun Complex.plus(other: Number): Complex = this + Complex(other.toDouble(), 0.0)
+
+fun Complex.toExpression(): Expression<ComplexSort> =
+  ComplexSort.construct(RealLiteral(re), RealLiteral(im))

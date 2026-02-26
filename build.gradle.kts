@@ -73,9 +73,13 @@ gitVersioning.apply {
   }
 }
 
-repositories { mavenCentral() }
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
 
 dependencies {
+    implementation(libs.konstraints)
   testImplementation(platform(libs.junit.bom))
   testImplementation(libs.junit.jupiter)
   testRuntimeOnly(libs.junit.launcher)

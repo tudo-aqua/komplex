@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2023-2025 The Konstraints Authors
+ * Copyright 2023-2026 The Konstraints Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,4 +66,4 @@ infix operator fun Number.plus(other: Complex): Complex = Complex(this.toDouble(
 infix operator fun Complex.plus(other: Number): Complex = this + Complex(other.toDouble(), 0.0)
 
 fun Complex.toExpression(): Expression<ComplexSort> =
-  ComplexSort.construct(RealLiteral(re), RealLiteral(im))
+    ComplexSort.construct(RealLiteral(re), RealLiteral(im))

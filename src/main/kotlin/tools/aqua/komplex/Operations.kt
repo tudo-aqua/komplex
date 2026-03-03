@@ -1,3 +1,21 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Copyright 2023-2026 The Konstraints Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package tools.aqua.komplex
 
 import tools.aqua.konstraints.dsl.UserDefinedSMTFunction1
@@ -22,30 +40,28 @@ object ComplexAddDecl :
         SortedVar("x".toSymbol(), ComplexSort),
         SortedVar("y".toSymbol(), ComplexSort),
         { x: Expression<ComplexSort>, y: Expression<ComplexSort> ->
-            ComplexSort.construct(RealAdd(x.re(), y.re()), RealAdd(x.im(), y.im()))
+          ComplexSort.construct(RealAdd(x.re(), y.re()), RealAdd(x.im(), y.im()))
         },
     ) {
-    override fun constructDynamic(
-        args: List<Expression<*>>,
-        indices: List<Index>,
-    ): Expression<ComplexSort> {
-        @Suppress("UNCHECKED_CAST")
-        return ComplexMul(args[0] as Expression<ComplexSort>, args[1] as Expression<ComplexSort>)
-    }
+  override fun constructDynamic(
+      args: List<Expression<*>>,
+      indices: List<Index>,
+  ): Expression<ComplexSort> {
+    @Suppress("UNCHECKED_CAST")
+    return ComplexMul(args[0] as Expression<ComplexSort>, args[1] as Expression<ComplexSort>)
+  }
 }
 
 class ComplexAdd(
     override val lhs: Expression<ComplexSort>,
     override val rhs: Expression<ComplexSort>,
-) : BinaryExpression<ComplexSort, ComplexSort, ComplexSort>("cpx.add".toSymbol(),
-    ComplexSort
-) {
-    override val theories: Set<Theories> = emptySet()
-    override val func = ComplexAddDecl // this is important so the context finds the related function
+) : BinaryExpression<ComplexSort, ComplexSort, ComplexSort>("cpx.add".toSymbol(), ComplexSort) {
+  override val theories: Set<Theories> = emptySet()
+  override val func = ComplexAddDecl // this is important so the context finds the related function
 
-    override fun copy(children: List<Expression<*>>): Expression<ComplexSort> {
-        TODO("Not yet implemented")
-    }
+  override fun copy(children: List<Expression<*>>): Expression<ComplexSort> {
+    TODO("Not yet implemented")
+  }
 }
 
 object ComplexSubDecl :
@@ -55,30 +71,28 @@ object ComplexSubDecl :
         SortedVar("x".toSymbol(), ComplexSort),
         SortedVar("y".toSymbol(), ComplexSort),
         { x: Expression<ComplexSort>, y: Expression<ComplexSort> ->
-            ComplexSort.construct(RealSub(x.re(), y.re()), RealSub(x.im(), y.im()))
+          ComplexSort.construct(RealSub(x.re(), y.re()), RealSub(x.im(), y.im()))
         },
     ) {
-    override fun constructDynamic(
-        args: List<Expression<*>>,
-        indices: List<Index>,
-    ): Expression<ComplexSort> {
-        @Suppress("UNCHECKED_CAST")
-        return ComplexSub(args[0] as Expression<ComplexSort>, args[1] as Expression<ComplexSort>)
-    }
+  override fun constructDynamic(
+      args: List<Expression<*>>,
+      indices: List<Index>,
+  ): Expression<ComplexSort> {
+    @Suppress("UNCHECKED_CAST")
+    return ComplexSub(args[0] as Expression<ComplexSort>, args[1] as Expression<ComplexSort>)
+  }
 }
 
 class ComplexSub(
     override val lhs: Expression<ComplexSort>,
     override val rhs: Expression<ComplexSort>,
-) : BinaryExpression<ComplexSort, ComplexSort, ComplexSort>("cpx.sub".toSymbol(),
-    ComplexSort
-) {
-    override val theories: Set<Theories> = emptySet()
-    override val func = ComplexSubDecl // this is important so the context finds the related function
+) : BinaryExpression<ComplexSort, ComplexSort, ComplexSort>("cpx.sub".toSymbol(), ComplexSort) {
+  override val theories: Set<Theories> = emptySet()
+  override val func = ComplexSubDecl // this is important so the context finds the related function
 
-    override fun copy(children: List<Expression<*>>): Expression<ComplexSort> {
-        TODO("Not yet implemented")
-    }
+  override fun copy(children: List<Expression<*>>): Expression<ComplexSort> {
+    TODO("Not yet implemented")
+  }
 }
 
 object ComplexMulDecl :
@@ -88,33 +102,31 @@ object ComplexMulDecl :
         SortedVar("x".toSymbol(), ComplexSort),
         SortedVar("y".toSymbol(), ComplexSort),
         { x: Expression<ComplexSort>, y: Expression<ComplexSort> ->
-            ComplexSort.construct(
-                RealSub(RealMul(x.re(), y.re()), RealMul(x.im(), y.im())),
-                RealAdd(RealMul(x.re(), y.im()), RealMul(x.im(), y.re())),
-            )
+          ComplexSort.construct(
+              RealSub(RealMul(x.re(), y.re()), RealMul(x.im(), y.im())),
+              RealAdd(RealMul(x.re(), y.im()), RealMul(x.im(), y.re())),
+          )
         },
     ) {
-    override fun constructDynamic(
-        args: List<Expression<*>>,
-        indices: List<Index>,
-    ): Expression<ComplexSort> {
-        @Suppress("UNCHECKED_CAST")
-        return ComplexMul(args[0] as Expression<ComplexSort>, args[1] as Expression<ComplexSort>)
-    }
+  override fun constructDynamic(
+      args: List<Expression<*>>,
+      indices: List<Index>,
+  ): Expression<ComplexSort> {
+    @Suppress("UNCHECKED_CAST")
+    return ComplexMul(args[0] as Expression<ComplexSort>, args[1] as Expression<ComplexSort>)
+  }
 }
 
 class ComplexMul(
     override val lhs: Expression<ComplexSort>,
     override val rhs: Expression<ComplexSort>,
-) : BinaryExpression<ComplexSort, ComplexSort, ComplexSort>("cpx.mul".toSymbol(),
-    ComplexSort
-) {
-    override val theories: Set<Theories> = emptySet()
-    override val func = ComplexMulDecl // this is important so the context finds the related function
+) : BinaryExpression<ComplexSort, ComplexSort, ComplexSort>("cpx.mul".toSymbol(), ComplexSort) {
+  override val theories: Set<Theories> = emptySet()
+  override val func = ComplexMulDecl // this is important so the context finds the related function
 
-    override fun copy(children: List<Expression<*>>): Expression<ComplexSort> {
-        TODO("Not yet implemented")
-    }
+  override fun copy(children: List<Expression<*>>): Expression<ComplexSort> {
+    TODO("Not yet implemented")
+  }
 }
 
 object ComplexDivDecl :
@@ -125,27 +137,25 @@ object ComplexDivDecl :
         SortedVar("y".toSymbol(), ComplexSort),
         { x: Expression<ComplexSort>, y: Expression<ComplexSort> -> ComplexMul(x, ComplexInv(y)) },
     ) {
-    override fun constructDynamic(
-        args: List<Expression<*>>,
-        indices: List<Index>,
-    ): Expression<ComplexSort> {
-        @Suppress("UNCHECKED_CAST")
-        return ComplexDiv(args[0] as Expression<ComplexSort>, args[1] as Expression<ComplexSort>)
-    }
+  override fun constructDynamic(
+      args: List<Expression<*>>,
+      indices: List<Index>,
+  ): Expression<ComplexSort> {
+    @Suppress("UNCHECKED_CAST")
+    return ComplexDiv(args[0] as Expression<ComplexSort>, args[1] as Expression<ComplexSort>)
+  }
 }
 
 class ComplexDiv(
     override val lhs: Expression<ComplexSort>,
     override val rhs: Expression<ComplexSort>,
-) : BinaryExpression<ComplexSort, ComplexSort, ComplexSort>("cpx.div".toSymbol(),
-    ComplexSort
-) {
-    override val theories: Set<Theories> = emptySet()
-    override val func = ComplexDivDecl // this is important so the context finds the related function
+) : BinaryExpression<ComplexSort, ComplexSort, ComplexSort>("cpx.div".toSymbol(), ComplexSort) {
+  override val theories: Set<Theories> = emptySet()
+  override val func = ComplexDivDecl // this is important so the context finds the related function
 
-    override fun copy(children: List<Expression<*>>): Expression<ComplexSort> {
-        TODO("Not yet implemented")
-    }
+  override fun copy(children: List<Expression<*>>): Expression<ComplexSort> {
+    TODO("Not yet implemented")
+  }
 }
 
 object ComplexInvDecl :
@@ -154,30 +164,28 @@ object ComplexInvDecl :
         ComplexSort,
         SortedVar("x".toSymbol(), ComplexSort),
         { x: Expression<ComplexSort> ->
-            ComplexSort.construct(
-                RealDiv(x.re(), RealAdd(RealMul(x.re(), x.re()), RealMul(x.im(), x.im()))),
-                RealNeg(RealDiv(x.im(), RealAdd(RealMul(x.re(), x.re()), RealMul(x.im(), x.im())))),
-            )
+          ComplexSort.construct(
+              RealDiv(x.re(), RealAdd(RealMul(x.re(), x.re()), RealMul(x.im(), x.im()))),
+              RealNeg(RealDiv(x.im(), RealAdd(RealMul(x.re(), x.re()), RealMul(x.im(), x.im())))),
+          )
         },
     ) {
-    override fun constructDynamic(
-        args: List<Expression<*>>,
-        indices: List<Index>,
-    ): Expression<ComplexSort> {
-        @Suppress("UNCHECKED_CAST")
-        return ComplexInv(args[0] as Expression<ComplexSort>)
-    }
+  override fun constructDynamic(
+      args: List<Expression<*>>,
+      indices: List<Index>,
+  ): Expression<ComplexSort> {
+    @Suppress("UNCHECKED_CAST")
+    return ComplexInv(args[0] as Expression<ComplexSort>)
+  }
 }
 
 class ComplexInv(
     override val inner: Expression<ComplexSort>,
-) : UnaryExpression<ComplexSort, ComplexSort>("cpx.inv".toSymbol(),
-    ComplexSort
-) {
-    override val theories: Set<Theories> = emptySet()
-    override val func = ComplexInvDecl // this is important so the context finds the related function
+) : UnaryExpression<ComplexSort, ComplexSort>("cpx.inv".toSymbol(), ComplexSort) {
+  override val theories: Set<Theories> = emptySet()
+  override val func = ComplexInvDecl // this is important so the context finds the related function
 
-    override fun copy(children: List<Expression<*>>): Expression<ComplexSort> {
-        TODO("Not yet implemented")
-    }
+  override fun copy(children: List<Expression<*>>): Expression<ComplexSort> {
+    TODO("Not yet implemented")
+  }
 }

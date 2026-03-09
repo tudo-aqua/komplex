@@ -19,7 +19,6 @@
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import com.github.gradle.node.variant.computeNodeDir
 import com.github.gradle.node.variant.computeNodeExec
-import org.gradle.api.plugins.JavaBasePlugin.DOCUMENTATION_GROUP
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
@@ -214,33 +213,7 @@ tasks.named("spotlessYaml") { dependsOn(tasks.npmSetup) }
 
 detekt { ignoreFailures = true }
 
-val kdocJar: TaskProvider<Jar> by
-    tasks.registering(Jar::class) {
-      group = DOCUMENTATION_GROUP
-      archiveClassifier = "kdoc"
-      dependsOn("dokkaGeneratePublicationHtml")
-      from(layout.buildDirectory.dir("dokka/html"))
-    }
 
-val kdoc: Configuration by
-    configurations.creating {
-      isCanBeConsumed = true
-      isCanBeResolved = false
-    }
-
-artifacts { add(kdoc.name, kdocJar) }
-
-java {
-  withJavadocJar()
-  withSourcesJar()
-}
-
-tasks.named<Jar>("javadocJar") {
-  dependsOn("dokkaGeneratePublicationHtml")
-  from(layout.buildDirectory.dir("dokka/html"))
-}
-
-tasks.withType<GenerateModuleMetadata>().configureEach { dependsOn(tasks.named("javadocJar")) }
 
 kotlin { jvmToolchain(libs.versions.java.jdk.get().toInt()) }
 

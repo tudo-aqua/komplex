@@ -42,6 +42,44 @@ plugins {
   alias(libs.plugins.versions)
   alias(libs.plugins.vanniktech.maven.publish)
 }
+mavenPublishing {
+  publishToMavenCentral()
+  signAllPublications()
+
+  coordinates("tudo.aqua.komplex", "komplex", "0.1")
+
+  pom {
+    name.set("komplex")
+    description.set("A Kotlin library for modeling complex numbers and encoding complex-number reasoning as SMT expressions.")
+    inceptionYear.set("2025")
+    url.set("https://github.com/tudo-aqua/komplex")
+    licenses {
+      license {
+        name.set("The Apache License, Version 2.0")
+        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+        distribution.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+      }
+    }
+    developers {
+      developer {
+        name.set("Laurenz Levi Spielmann")
+        email.set("laurenz-levi.spielmann@tu-dortmund.de")
+        organization.set("TU Dortmund University")
+      }
+      developer {
+        name.set("Richard Stewing")
+        email.set("richard.stewing@tu-dortmund.de")
+        organization.set("TU Dortmund University")
+      }
+    }
+
+    scm {
+      url.set("https://github.com/tudo-aqua/komplex/tree/main")
+      connection.set("scm:git:git://github.com:tudo-aqua/komplex.git")
+      developerConnection.set("scm:git:ssh://git@github.com:tudo-aqua/komplex.git")
+    }
+  }
+}
 
 group = "tools.aqua"
 

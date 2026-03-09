@@ -240,6 +240,8 @@ tasks.named<Jar>("javadocJar") {
   from(layout.buildDirectory.dir("dokka/html"))
 }
 
+tasks.withType<GenerateModuleMetadata>().configureEach { dependsOn(tasks.named("javadocJar")) }
+
 kotlin { jvmToolchain(libs.versions.java.jdk.get().toInt()) }
 
 tasks.test {

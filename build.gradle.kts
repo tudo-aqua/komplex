@@ -42,6 +42,7 @@ plugins {
   alias(libs.plugins.versions)
   alias(libs.plugins.vanniktech.maven.publish)
 }
+
 mavenPublishing {
   publishToMavenCentral()
   signAllPublications()
@@ -50,7 +51,9 @@ mavenPublishing {
 
   pom {
     name.set("komplex")
-    description.set("A Kotlin library for modeling complex numbers and encoding complex-number reasoning as SMT expressions.")
+    description.set(
+        "A Kotlin library for modeling complex numbers and encoding complex-number reasoning as SMT expressions."
+    )
     inceptionYear.set("2025")
     url.set("https://github.com/tudo-aqua/komplex")
     licenses {

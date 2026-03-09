@@ -215,7 +215,8 @@ val kdocJar: TaskProvider<Jar> by
     tasks.registering(Jar::class) {
       group = DOCUMENTATION_GROUP
       archiveClassifier = "kdoc"
-      from(tasks.dokkaHtml.flatMap { it.outputDirectory })
+      dependsOn("dokkaGeneratePublicationHtml")
+      from(layout.buildDirectory.dir("dokka/html"))
     }
 
 val kdoc: Configuration by
@@ -226,16 +227,14 @@ val kdoc: Configuration by
 
 artifacts { add(kdoc.name, kdocJar) }
 
-val javadocJar: TaskProvider<Jar> by
-    tasks.registering(Jar::class) {
-      group = DOCUMENTATION_GROUP
-      archiveClassifier = "javadoc"
-      from(tasks.dokkaJavadoc.flatMap { it.outputDirectory })
-    }
-
 java {
   withJavadocJar()
   withSourcesJar()
+}
+
+tasks.named<Jar>("javadocJar") {
+  dependsOn("dokkaGeneratePublicationHtml")
+  from(layout.buildDirectory.dir("dokka/html"))
 }
 
 kotlin { jvmToolchain(libs.versions.java.jdk.get().toInt()) }

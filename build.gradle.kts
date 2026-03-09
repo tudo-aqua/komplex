@@ -36,11 +36,11 @@ plugins {
   alias(libs.plugins.kotlin.dokka)
   alias(libs.plugins.kotlin.jvm)
   alias(libs.plugins.kotlin.kover)
-  alias(libs.plugins.nexus.publish)
   alias(libs.plugins.node)
   alias(libs.plugins.spotless)
   alias(libs.plugins.taskTree)
   alias(libs.plugins.versions)
+  alias(libs.plugins.vanniktech.maven.publish)
 }
 
 group = "tools.aqua"

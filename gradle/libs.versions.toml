@@ -26,11 +26,11 @@ gitVersioning = { id = "me.qoomon.git-versioning", version = "6.4.4" }
 kotlin-dokka = { id = "org.jetbrains.dokka", version = "2.1.0" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-kover = { id = "org.jetbrains.kotlinx.kover", version = "0.8.3" }
-nexus-publish = { id = "io.github.gradle-nexus.publish-plugin", version = "2.0.0" }
 node = { id = "com.github.node-gradle.node", version = "7.1.0" }
 spotless = { id = "com.diffplug.spotless", version = "8.0.0" }
 taskTree = { id = "com.dorongold.task-tree", version = "4.0.0" }
 versions = { id = "com.github.ben-manes.versions", version = "0.51.0" }
+vanniktech-maven-publish = { id = "com.vanniktech.maven.publish", version = "0.36.0" }
 
 [libraries]
 junit-bom = { group = "org.junit", name = "junit-bom", version = "5.13.4" }

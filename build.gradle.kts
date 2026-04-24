@@ -213,8 +213,6 @@ tasks.named("spotlessYaml") { dependsOn(tasks.npmSetup) }
 
 detekt { ignoreFailures = true }
 
-
-
 kotlin { jvmToolchain(libs.versions.java.jdk.get().toInt()) }
 
 tasks.test {

@@ -46,7 +46,7 @@ mavenPublishing {
   publishToMavenCentral()
   signAllPublications()
 
-  coordinates("tools.aqua", "komplex", "0.1")
+  coordinates("tools.aqua", "komplex", "0.1.1")
 
   pom {
     name.set("komplex")
